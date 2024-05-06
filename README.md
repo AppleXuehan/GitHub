@@ -20,6 +20,3 @@ Open your web browser and navigate to http://localhost:3000 to access the applic
 6. Test the Program: To test the program, use the following command:
 npm run test
 
-7. Grant Access: In order to access the userlist page, please add your email to the specified file:
-..\GitHub-main\reactAssessment\src\app\api\db\authEmail.ts
-This will allow you to view the userlist page.
