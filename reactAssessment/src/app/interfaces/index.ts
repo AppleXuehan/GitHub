@@ -1,12 +1,3 @@
-export interface LoginUserData {
-    user?: {
-      name?: string | null;
-      email?: string | null;
-      image?: string | null;
-    };
-    expires: string;
-}
-
 export interface UserDataAPI {
     page: number;
     per_page: number;
@@ -18,6 +9,7 @@ export interface UserDataAPI {
       text: string;
     };
   }
+  
 
   export interface User {
     id: number;
@@ -26,4 +18,7 @@ export interface UserDataAPI {
     last_name: string;
     avatar: string;
   }
-  
+
+  export type ResponseError = {
+    message: string;
+  };

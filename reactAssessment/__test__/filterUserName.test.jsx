@@ -1,31 +1,40 @@
-import axios from 'axios'; 
-import { fetchUsers } from '../src/app/api/store/features/userSlice'; 
+// Mock Next.js environment
+jest.mock("next/server", () => ({
+  NextRequest: jest.fn(),
+  NextResponse: jest.fn(),
+}));
 
-describe('fetchUsers thunk', () => {
-  it('should fetch users with first name starting with "G" or last name starting with "W"', async () => {
-    const mockedData = {
-      data: [
-        { id: 1, first_name: 'George', last_name: 'Washington' },
-        { id: 2, first_name: 'John', last_name: 'Adams' },
-        { id: 3, first_name: 'Thomas', last_name: 'Jefferson' },
-      ],
+import axios from "axios";
+import { fetchUsers } from "../src/app/api/users/route"; 
+
+jest.mock("axios");
+
+describe("fetchUsers function", () => {
+  it("should fetch users with first name starting with 'G' or last name starting with 'W'", async () => {
+    const mockResponse = {
+      data: {
+        total_pages: 1,
+        data: [
+          { id: 1, first_name: "George", last_name: "Washington", email: "george@example.com" },
+          { id: 2, first_name: "John", last_name: "Adams", email: "john@example.com" },
+          { id: 3, first_name: "Thomas", last_name: "Jefferson", email: "thomas@example.com" },
+        ],
+      },
     };
 
-    // Mock axios.get to return the mockedData
-    jest.spyOn(axios, 'get').mockResolvedValue({ data: mockedData });
+    axios.get.mockResolvedValue(mockResponse);
 
-    // Dispatch the fetchUsers thunk
-    const resultAction = await fetchUsers()(jest.fn(), jest.fn(), undefined);
+    const users = await fetchUsers();
 
-    // Extract the payload from the resulting action
-    const users = resultAction.payload;
+    expect(axios.get).toHaveBeenCalledWith("https://reqres.in/api/users?page=1");
+    expect(users).toEqual([
+      { id: 1, first_name: "George", last_name: "Washington", email: "george@example.com" },
+    ]);
+  });
 
-    // Check if users contain only those with first name starting with "G" or last name starting with "W"
-    const allMatch = users.every(user => {
-      return user.first_name?.startsWith('G') || user.last_name?.startsWith('W');
-    });
+  it("should throw an error if fetching data fails", async () => {
+    axios.get.mockRejectedValue(new Error("Failed to fetch data"));
 
-    // Assert that all users match the criteria
-    expect(allMatch).toBe(true);
+    await expect(fetchUsers()).rejects.toThrow("An error occurred while fetching data: Failed to fetch data");
   });
 });

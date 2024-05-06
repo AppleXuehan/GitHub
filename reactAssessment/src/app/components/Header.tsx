@@ -22,7 +22,7 @@ const Header = () => {
     >
       <Box display="flex" alignItems="center"><Typography gutterBottom>Hello, {session?.user?.name}</Typography></Box>
       <Box>
-        <Button onClick={() => signOut()}>
+        <Button onClick={()=> signOut()}>
             Sign Out
         </Button>
       </Box>
